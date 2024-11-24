@@ -18,17 +18,40 @@ public class StaffScrapper {
             Elements staffArticle = staffDiv.select("article");
             Elements departments = staffArticle.select("h3");
 
-            for (Element department : departments) {
-                System.out.println(department.text());
+            printAll(departments);
 
-                Element sibling = department.nextElementSibling();
-                while (sibling != null && sibling.tagName().equals("p")) {
-                    sibling.select("a").forEach(a -> System.out.println("\t->" + a.text()));
-                    sibling = sibling.nextElementSibling();
-                }
-            }
+            System.out.println("\nTylko doktorzy i doktorzy inżynierowie:");
+            filterDoctors(departments);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void printAll(Elements departments) {
+        for (Element department : departments) {
+            System.out.println(department.text());
+
+            Element sibling = department.nextElementSibling();
+            while (sibling != null && sibling.tagName().equals("p")) {
+                sibling.select("a").forEach(a -> System.out.println("\t->" + a.text()));
+                sibling = sibling.nextElementSibling();
+            }
+        }
+    }
+
+    private static void filterDoctors(Elements departments) {
+        for (Element department : departments) {
+            System.out.println(department.text());
+
+            Element sibling = department.nextElementSibling();
+            while (sibling != null && sibling.tagName().equals("p")) {
+               sibling.select("a").forEach(a -> {
+                   if (a.text().matches(".*dr(?! hab).*|.*dr inż.*")) {
+                       System.out.println("\t->" + a.text());
+                   }
+               });
+                sibling = sibling.nextElementSibling();
+            }
         }
     }
 
