@@ -13,21 +13,22 @@ public class StaffScrapper {
 
         try{
             Document doc = Jsoup.connect(url).get();
-            Elements staff = doc.select(".post-content");
 
-            System.out.println(staff.select("h2").text());
+            Elements staffDiv = doc.select(".post-content");
+            Elements staffArticle = staffDiv.select("article");
+            Elements departments = staffArticle.select("h3");
 
-            for(Element st : staff){
-                String title = st.select("h3").text();
-                String workers = st.select("p").text();
+            for (Element department : departments) {
+                System.out.println(department.text());
 
-                System.out.println(title + "\n");
-                System.out.println(workers);
-                System.out.println();
+                Element sibling = department.nextElementSibling();
+                while (sibling != null && sibling.tagName().equals("p")) {
+                    sibling.select("a").forEach(a -> System.out.println("\t->" + a.text()));
+                    sibling = sibling.nextElementSibling();
+                }
             }
-
-        } catch(IOException ex){
-            ex.getMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
